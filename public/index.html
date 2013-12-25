@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+    <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+</head>
+<body onload="initLife()">
+  <div class="container">
+    <h1> Conway's Game of Life implementation on HTML5 </h1>
+    <hr>
+
+    <div class="row">
+    <div class="col-md-3">
+    <h2> Whaaaaaaat? </h2>
+    <p>
+    Cada cuadrado amarillo representa un espacio en el que puede habitar una celula (representada por un cuadrado rojo)
+    </p>
+    <p>
+    Un espacio vacío se convierte en célula si hay 2 o 3 células vacías a su alrededor </p>
+    <p>
+    Una célula muere si hay menos de 2 o mas de celulas alrededor
+    </p>
+    <h2> Instrucciones </h2>
+    <p> Pone un par de células haciendo click con el mouse en la grilla </p>
+    <p> Haz click en el botón empezar </p>
+    <p> Trata de crear organismos que sobrevivan </p>
+    </div>
+      <div class="col-md-6 ">
+        <canvas id="myCanvas" width="502" height="502"></canvas>
+      </div>
+          <div class="col-md-3">
+          <ul class="nav">
+          <li style="margin-top:10px"> <button onclick="play()" class="btn btn-primary"> Empezar </button> </li>
+          <li style="margin-top:10px"> <button onclick="stop()" class="btn btn-warning"> Pausa </button> </li>
+          
+          <li style="margin-top:10px"> <button onclick="emptyMatrix()" class="btn btn-danger"> Limpiar </button> </li>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var canvas;
+    var context;
+    var matrix = [];
+    var intervalHandler;
+
+    function changeCel(event)
+    {
+      x = Math.floor(event.offsetX / 50); 
+      y = Math.floor(event.offsetY / 50);
+      if (matrix[x][y] == 0)
+      {
+        matrix[x][y] = 1;
+      }
+      else
+      {
+        matrix[x][y] = 0;
+      }
+      paintMatrix();
+
+    }
+
+    function paint(x, y)
+    {
+     context.beginPath();
+
+     context.rect(x * 50, y * 50, 50, 50);
+     context.fillStyle = 'red';
+     context.fill();
+
+     context.lineWidth = 1;
+     context.strokeStyle = 'black';
+     context.stroke();
+
+     context.closePath();
+   }
+
+   function clear(x, y)
+   {
+     context.beginPath();
+
+     context.rect(x * 50, y * 50, 50, 50);
+     context.fillStyle = 'yellow';
+     context.fill();
+
+     context.lineWidth = 1;
+     context.strokeStyle = 'black';
+     context.stroke();
+
+     context.closePath();    
+   }
+
+   function paintMatrix()
+   {
+    for (var i = 0; i < 8; i++)
+    {
+      for (var j = 0; j < 8; j++)
+      {
+        if (matrix[i][j] == 1)
+        {
+          paint(i,j)
+        }
+
+        else
+        {
+          clear(i,j)
+        }
+
+      }
+    }
+  }
+
+  function emptyMatrix()
+  {
+    for(var i=0; i<9; i++) 
+    {
+      matrix[i] = new Array(9);
+    }
+
+    for (var i = 0; i < 8; i++)
+    {
+     for (var j = 0; j < 8; j++)
+     {
+       context.beginPath();
+       context.rect(i*50+1, j*50+1, 50, 50);
+       context.fillStyle = 'yellow';
+       context.lineWidth = 1; 
+       context.strokeStyle = 'black';
+       context.stroke();
+       context.closePath();
+       context.fill();
+       matrix[i][j] = 0;
+     }
+    }
+
+  }
+
+
+  function step()
+  {
+
+    next_matrix = [];
+    for(var i=0; i<9; i++) 
+    {
+      next_matrix[i] = new Array(9);
+    }
+
+    for (var i = 0; i < 8; i++)
+    {
+      for (var j = 0; j < 8; j++)
+      {
+        neighbors = countNeighbors(i, j)
+        if (neighbors == 2 || neighbors == 3)
+        {
+          next_matrix[i][j] = 1;
+        }
+        else
+        {
+          next_matrix[i][j] = 0;
+        }
+      }
+    }
+
+    delete matrix;
+    matrix = next_matrix
+    paintMatrix();
+  }
+
+  function initLife()
+  {
+    canvas = document.getElementById('myCanvas');    
+    context = canvas.getContext('2d');
+    emptyMatrix();
+
+    canvas.addEventListener('mousedown', changeCel, false)
+  }
+
+  function countNeighbors(x,y)
+  {
+    count = 0;
+    for (i = x - 1; i <= x + 1; i++)
+    {
+      for (j = y - 1; j <= y + 1; j++)
+      {
+        try
+        {
+          if ((i == x) && (j == y))
+          {
+            //console.log("Este no cuenta")
+          }
+          else
+          {
+            count = count + (matrix[i][j] || 0);
+          }
+        }
+        catch(err)
+        {
+        }        
+      }
+    }
+    count = count || 0 // Convert NaN values to 0
+    return count;
+  }
+
+  function play()
+  {
+    intervalHandler = setInterval(step, 1000);
+  }
+
+  function stop()
+  {
+    clearInterval(intervalHandler);
+  }
+
+</script>
+</body>
+</html>

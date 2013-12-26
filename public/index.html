@@ -5,40 +5,76 @@
     <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 
-  <!-- Optional theme -->
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/yeti.css">
+
 
 </head>
 <body onload="initLife()">
+  <nav class="navbar navbar-default" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#"> Conway's Game of Life implementation on HTML5</a>
+  </div>
+
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav navbar-right ">
+      <li class="active">
+        <a href="http://about.me/gonzalo.sanchez.d">
+          <img src="http://d2ed0w4q03gsmw.cloudfront.net/fe6a0021005b/images/assets/me_32x32.png">
+        </a>
+      </li>
+    </ul>
+  </div>
+  </nav>
+
   <div class="container">
     <h1> Conway's Game of Life implementation on HTML5 </h1>
     <hr>
 
     <div class="row">
-    <div class="col-md-3">
-    <h2> Whaaaaaaat? </h2>
-    <p>
-    Cada cuadrado amarillo representa un espacio en el que puede habitar una celula (representada por un cuadrado rojo)
-    </p>
-    <p>
-    Un espacio vacío se convierte en célula si hay 2 o 3 células vacías a su alrededor </p>
-    <p>
-    Una célula muere si hay menos de 2 o mas de celulas alrededor
-    </p>
-    <h2> Instrucciones </h2>
-    <p> Pone un par de células haciendo click con el mouse en la grilla </p>
-    <p> Haz click en el botón empezar </p>
-    <p> Trata de crear organismos que sobrevivan </p>
-    </div>
-      <div class="col-md-6 ">
+      <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-3">
+            <img src="http://www.rctech.net/forum/attachments/arizona-new-mexico-racing/1073896d1369948650-one-hobbies-r-c-raceway-minion.png" class="img-responsive center-block">
+          </div>
+          <div class="col-md-9">   
+            <h2> WTF? </h2>
+          </div>
+        </div>
+
+            <p style="margin-top:20px">
+            Cada cuadrado amarillo representa un espacio en el que puede habitar una celula (representada por un cuadrado rojo)
+            </p>
+
+        <p>
+        Un espacio vacío se convierte en célula si hay 2 o 3 células vacías a su alrededor </p>
+        <p>
+        Una célula muere si hay menos de 2 o mas de celulas alrededor
+        </p>
+        <h2> Instrucciones </h2>
+        <p> Pone un par de células haciendo click con el mouse en la grilla </p>
+        <p> Haz click en el botón empezar </p>
+        <p> Trata de crear organismos que sobrevivan </p>
+      </div>
+      <div class="col-md-8" style="text-align:center">
+        <div class="center-block">
+          <div class="btn-group">
+          <button onclick="play()" class="btn btn-primary btn-sm"> Empezar </button> 
+          <button onclick="stop()" class="btn btn-warning btn-sm"> Pausa </button> 
+          <button onclick="emptyMatrix()" class="btn btn-danger btn-sm"> Limpiar </button>
+          </div>
+        <div class="clearfix" style="margin-top:20px">
         <canvas id="myCanvas" width="502" height="502"></canvas>
+        </div>
+
       </div>
           <div class="col-md-3">
-          <ul class="nav">
-          <li style="margin-top:10px"> <button onclick="play()" class="btn btn-primary"> Empezar </button> </li>
-          <li style="margin-top:10px"> <button onclick="stop()" class="btn btn-warning"> Pausa </button> </li>
-          
-          <li style="margin-top:10px"> <button onclick="emptyMatrix()" class="btn btn-danger"> Limpiar </button> </li>
 
       </div>
     </div>
@@ -50,6 +86,7 @@
     var context;
     var matrix = [];
     var intervalHandler;
+    var gridSize = 10
 
     function changeCel(event)
     {
@@ -99,9 +136,9 @@
 
    function paintMatrix()
    {
-    for (var i = 0; i < 8; i++)
+    for (var i = 0; i < gridSize; i++)
     {
-      for (var j = 0; j < 8; j++)
+      for (var j = 0; j < gridSize; j++)
       {
         if (matrix[i][j] == 1)
         {
@@ -119,14 +156,14 @@
 
   function emptyMatrix()
   {
-    for(var i=0; i<9; i++) 
+    for(var i=0; i<gridSize; i++) 
     {
-      matrix[i] = new Array(9);
+      matrix[i] = new Array(gridSize);
     }
 
-    for (var i = 0; i < 8; i++)
+    for (var i = 0; i < gridSize; i++)
     {
-     for (var j = 0; j < 8; j++)
+     for (var j = 0; j < gridSize; j++)
      {
        context.beginPath();
        context.rect(i*50+1, j*50+1, 50, 50);
@@ -147,14 +184,14 @@
   {
 
     next_matrix = [];
-    for(var i=0; i<9; i++) 
+    for(var i = 0; i < gridSize; i++) 
     {
-      next_matrix[i] = new Array(9);
+      next_matrix[i] = new Array(gridSize);
     }
 
-    for (var i = 0; i < 8; i++)
+    for (var i = 0; i < gridSize; i++)
     {
-      for (var j = 0; j < 8; j++)
+      for (var j = 0; j < gridSize; j++)
       {
         neighbors = countNeighbors(i, j)
         if (neighbors == 2 || neighbors == 3)

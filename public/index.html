@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="css/yeti.css">
 
-
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 </head>
 <body onload="initLife()">
   <nav class="navbar navbar-default" role="navigation">
@@ -86,12 +86,19 @@
     var context;
     var matrix = [];
     var intervalHandler;
-    var gridSize = 10
+    var gridSize = 10;
 
     function changeCel(event)
     {
+      if(typeof event.offsetX === "undefined" || typeof event.offsetY === "undefined") {
+       var targetOffset = $(event.target).offset();
+       event.offsetX = event.pageX - targetOffset.left;
+       event.offsetY = event.pageY - targetOffset.top;
+      }
+
       x = Math.floor(event.offsetX / 50); 
       y = Math.floor(event.offsetY / 50);
+
       if (matrix[x][y] == 0)
       {
         matrix[x][y] = 1;
@@ -142,12 +149,12 @@
       {
         if (matrix[i][j] == 1)
         {
-          paint(i,j)
+          paint(i,j);
         }
 
         else
         {
-          clear(i,j)
+          clear(i,j);
         }
 
       }
@@ -156,10 +163,6 @@
 
   function emptyMatrix()
   {
-    for(var i=0; i<gridSize; i++) 
-    {
-      matrix[i] = new Array(gridSize);
-    }
 
     for (var i = 0; i < gridSize; i++)
     {
@@ -193,7 +196,7 @@
     {
       for (var j = 0; j < gridSize; j++)
       {
-        neighbors = countNeighbors(i, j)
+        neighbors = countNeighbors(i, j);
         if (neighbors == 2 || neighbors == 3)
         {
           next_matrix[i][j] = 1;
@@ -206,7 +209,7 @@
     }
 
     delete matrix;
-    matrix = next_matrix
+    matrix = next_matrix;
     paintMatrix();
   }
 
@@ -214,9 +217,13 @@
   {
     canvas = document.getElementById('myCanvas');    
     context = canvas.getContext('2d');
-    emptyMatrix();
+    for(var i = 0; i < gridSize; i++) 
+    {
+      matrix[i] = new Array(gridSize);
+    }
 
-    canvas.addEventListener('mousedown', changeCel, false)
+    emptyMatrix();
+    canvas.addEventListener('mousedown', changeCel, false);
   }
 
   function countNeighbors(x,y)
@@ -242,7 +249,7 @@
         }        
       }
     }
-    count = count || 0 // Convert NaN values to 0
+    count = count || 0; // Convert NaN values to 0
     return count;
   }
 
